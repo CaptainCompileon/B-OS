@@ -26,14 +26,14 @@ int main()
         write(p_fd[1], "a", 1);
         pid = wait(0);
         read(ch_fd[0], buff , 1);
-        printf("recieved pong\n");
+        printf("%d: recieved pong\n", getpid());
 
     }
     else if (pid == 0) {
         //child
         char buff[1];
         read(p_fd[0], buff , 1);
-        printf("recieved ping\n");
+        printf("%d: recieved ping\n", getpid());
         write(ch_fd[1], "b", 1);
     } else {
       fprintf(2, "error: fork()\n");
