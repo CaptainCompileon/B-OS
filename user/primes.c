@@ -3,78 +3,85 @@
 #include "user.h"
 
 void
-prime(int fd0);
+primes(int fd0);
 
 int
 main(int argc, char const *argv[])
 {
-    int i, n_start, n_end;
-    int fd[2];
 
     if (argc != 1)
     {
-        printf("usage: primes\n");
-        exit();
+        printf("use: primes\n");
+        exit(0);
     }
 
-    n_start = 2;
-    n_end = 35;
-    close(0);
+    int fd[2];
+    int n_start = 2;
+    int n_end = 35;
+
     pipe(fd);
-    if (fork() == 0)
+
+    int pid = fork();
+
+    if (pid == 0)
     {
         close(fd[1]);
-        prime(fd[0]);
-        exit();
+        primes(fd[0]);
+        exit(0);
+    }
+    else if (pid > 0)
+    {
+        close(fd[0]);
+        close(1);
+        for(int i = n_start; i <= n_end; i++) {write(fd[1], &i, 4);}
+        close(fd[1]);
+        wait(0);
+        exit(0);
     }
     else
     {
-        close(fd[0]);
-        printf("prime %d\n", n_start);
-        for (i = n_start + 1; i <= n_end; i++)
-            if (i%n_start != 0)
-                write(fd[1], &i, 4);
-        close(fd[1]);
-        wait();
-        sleep(3);
-        close(1);
-        exit();
+        printf("err: fork()");
+        exit(0);
     }
-
-    // control never reach here
-    printf("unexpected exit in main!\n");
-    exit();
 }
 
 void
-prime(int fd0)
+primes(int fd0)
 {
-    int i, start;
-    int fd[2];
+    int prime, i;
 
-    if (read(fd0, &start, 4) <= 0)
-        exit();
-
-    printf("prime %d\n", start);
-    pipe(fd);
-    if (fork() == 0)
+    if(read(fd0, &prime, 4) <= 0)
     {
-        close(fd0);
+        exit(0);
+    }
+     int fd[2];
+
+    printf("prime: %d\n", prime);
+    pipe(fd);
+
+    int pid = fork();
+    if (pid == 0)
+    {
         close(fd[1]);
-        prime(fd[0]);
-        exit();
+        primes(fd[0]);
+        exit(0);
+    }
+    else if (pid > 0)
+    {
+        close(fd[0]);
+       while (read(fd0, &i, 4) > 0)
+       {
+            if (i % prime != 0) {
+                write(fd[1], &i, 4);
+            }
+        }
+        close(fd[1]);
+        wait(0);
+        exit(0);
     }
     else
     {
-        close(1);
-        close(fd[0]);
-        while (read(fd0, &i, 4) > 0)
-            if (i % start != 0)
-                write(fd[1], &i, 4);
-        exit();
+        printf("err: fork()");
+        exit(0);
     }
-
-    // control never reach here
-    printf("error occur in prime!\n");
-    exit();
 }

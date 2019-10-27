@@ -10,7 +10,7 @@ main(int argc, char *argv[])
 {
     if(argc == 1){
         fprintf(2, "xargs: no command\n");
-        exit();
+        exit(0);
     }
 
     char *argvt[MAXARG];
@@ -36,7 +36,7 @@ main(int argc, char *argv[])
             argvt[argc -1 + (m++)] = s;
             if(argc + m >= MAXARG){
                 fprintf(2, "xargs: too manh arguments\n");
-                exit();
+                exit(0);
             }
             //fprintf(2, "%s\n",s);
         } 
@@ -51,9 +51,9 @@ main(int argc, char *argv[])
                 fprintf(2, " %s", argvt[i]);
             }
             fprintf(2, "\n");
-            exit();
+            exit(0);
         }
-        wait();
+        wait(0);
     }
-    exit();
+    exit(0);
 }

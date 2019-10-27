@@ -10,12 +10,8 @@ find(char *dir, char *para)
 {
     char buf[512], *p;
     int fd;
-
     struct dirent de;
-
     struct stat st;
-
-    //printf("dir: %s\n", dir);
 
     if((fd = open(dir, 0)) < 0){
         fprintf(2, "find: cannot open %s\n", dir);
@@ -39,8 +35,6 @@ find(char *dir, char *para)
         }
         strcpy(buf, dir);
         
-        //printf("buf: %s\n", buf);
-
         p = buf + strlen(buf);
         *p++ = '/';
         while(read(fd, &de, sizeof(de))){
@@ -79,7 +73,7 @@ main(int argc, char *argv[])
     } else {
         printf("find: argument error\n");
     }
-    exit();
+    exit(0);
 }
 
 // Regexp matcher from Kernighan & Pike,
